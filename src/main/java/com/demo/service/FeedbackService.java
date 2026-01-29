@@ -1,6 +1,7 @@
 package com.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +46,18 @@ public class FeedbackService {
         Product product = productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        if (feedbackRepository.existsByUserAndProduct(user, product)) {
-            throw new RuntimeException("Feedback already exists for this product");
-        }
+        Feedback feedback;
+        Optional<Feedback> existingFeedback =
+                feedbackRepository.findByUserAndProduct(user, product);
 
+        if (existingFeedback.isPresent()) {
+            // 🔄 UPDATE EXISTING FEEDBACK
+            feedback = existingFeedback.get();
+            feedback.setRating(dto.getRating());
+            feedback.setComment(dto.getComment());
+
+        }
+        else {
         Order order = null;
         if (dto.getOrderId() != null) {
             order = orderRepository.findById(dto.getOrderId())
@@ -59,13 +68,13 @@ public class FeedbackService {
             }
         }
 
-        Feedback feedback = new Feedback();
+        feedback = new Feedback();
         feedback.setUser(user);
         feedback.setProduct(product);
         feedback.setOrder(order);
         feedback.setRating(dto.getRating());
         feedback.setComment(dto.getComment());
-
+        }
         Feedback saved = feedbackRepository.save(feedback);
         return mapToDTO(saved);
     }
@@ -146,7 +155,8 @@ public class FeedbackService {
         dto.setComment(feedback.getComment());
         dto.setUserName(feedback.getUser().getUserName());
         dto.setCreatedAt(feedback.getCreatedAt());
-
+       
+        dto.setProductName(feedback.getProduct().getProductName()); 
         // ✅ FIX: map Order → orderId safely
         if (feedback.getOrder() != null) {
             dto.setOrderId(feedback.getOrder().getOrderId());

@@ -14,6 +14,7 @@ import com.demo.service.FeedbackService;
 import jakarta.validation.Valid;
 // use javax.validation.Valid if Spring Boot 2.x
 
+
 @RestController
 @RequestMapping("/api/feedbacks")
 public class FeedbackController {
@@ -21,69 +22,44 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
-    /* ======================
-       CREATE FEEDBACK
-       ====================== */
     @PostMapping("/dd")
     public ResponseEntity<FeedbackResponseDTO> createFeedback(
             @RequestParam Integer userId,
             @Valid @RequestBody FeedbackRequestDTO dto) {
 
-        FeedbackResponseDTO savedFeedback =
-                feedbackService.addFeedback(userId, dto);
-
-        return new ResponseEntity<>(savedFeedback, HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                feedbackService.addFeedback(userId, dto),
+                HttpStatus.CREATED
+        );
     }
 
-    /* ======================
-       GET ALL FEEDBACKS
-       ====================== */
-    @GetMapping({"","/"})   // ✅ ONLY THIS
+    @GetMapping({"", "/"})
     public ResponseEntity<List<FeedbackResponseDTO>> getAllFeedbacks() {
         return ResponseEntity.ok(feedbackService.getAllFeedbacks());
     }
-    /* ======================
-       GET FEEDBACK BY ID
-       ====================== */
+
     @GetMapping("/{id}")
     public ResponseEntity<FeedbackResponseDTO> getFeedbackById(
             @PathVariable Integer id) {
-
-        FeedbackResponseDTO feedback =
-                feedbackService.getFeedbackById(id);
-
-        return ResponseEntity.ok(feedback);
+        return ResponseEntity.ok(feedbackService.getFeedbackById(id));
     }
 
-    /* ======================
-       GET FEEDBACK BY PRODUCT
-       ====================== */
     @GetMapping("/product/{productId}")
     public ResponseEntity<List<FeedbackResponseDTO>> getFeedbackByProduct(
             @PathVariable Integer productId) {
-
-        List<FeedbackResponseDTO> feedbacks =
-                feedbackService.getFeedbacksByProduct(productId);
-
-        return ResponseEntity.ok(feedbacks);
+        return ResponseEntity.ok(
+                feedbackService.getFeedbacksByProduct(productId)
+        );
     }
 
-    /* ======================
-       GET FEEDBACK BY USER
-       ====================== */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<FeedbackResponseDTO>> getFeedbackByUser(
             @PathVariable Integer userId) {
-
-        List<FeedbackResponseDTO> feedbacks =
-                feedbackService.getFeedbacksByUser(userId);
-
-        return ResponseEntity.ok(feedbacks);
+        return ResponseEntity.ok(
+                feedbackService.getFeedbacksByUser(userId)
+        );
     }
 
-    /* ======================
-       DELETE FEEDBACK
-       ====================== */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteFeedback(
             @PathVariable Integer id,

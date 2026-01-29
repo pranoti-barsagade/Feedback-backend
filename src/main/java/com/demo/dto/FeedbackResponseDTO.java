@@ -9,7 +9,16 @@ public class FeedbackResponseDTO {
     private Integer rating;
     private String comment;
     private String userName;
-    private LocalDateTime createdAt;
+    private String productName;
+    public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	private LocalDateTime createdAt;
 
     // getters & setters
 

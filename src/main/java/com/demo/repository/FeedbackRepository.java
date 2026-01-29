@@ -1,6 +1,7 @@
 package com.demo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,7 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
 
     // Check if user already gave feedback for a product
     boolean existsByUserAndProduct(User user, Product product);
+    
+    Optional<Feedback> findByUserAndProduct(User user, Product product);
+
 }
